@@ -1,0 +1,35 @@
+{% extends "base.html"%}
+
+{% block start%}
+
+    <div class="container mt-4 mb-3">
+
+        <form method="post" class="col-6 mx-auto card p-3 shadow-lg" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h2>Register Your Self </h2>
+
+            <div class="mb-3">
+                <label for="name" class="form-label">
+                    Input your name
+                </label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="roll_no" class="form-label">
+                    Input your roll number
+                </label>
+                <input type="text" name="roll_no" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">
+                    Input Your Image
+                </label>
+                <input type="file" name="image" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary mb-2">Register</button>
+    
+        </form>
+    </div>
+
+{% endblock %}

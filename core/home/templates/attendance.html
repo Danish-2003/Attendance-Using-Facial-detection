@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block start%}
+
+<form method="post" class="col-6 mx-auto card p-3 shadow-lg" enctype="multipart/form-data">
+    {% csrf_token %}
+
+   <div class="container mt-4 mb-3">
+
+    <label for="image" class="form-label">Upload Image</label>
+    <input type="file" class="form-control" name="image" required>
+   </div>
+   <button type="submit" class="btn btn-primary mb-2">Attendance</button>
+
+    
+</form>
+
+
+
+
+{% endblock %}
