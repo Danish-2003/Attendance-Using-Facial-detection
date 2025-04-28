@@ -1,0 +1,26 @@
+# Virtual environment folders
+venv/
+.venv/
+env/
+.env/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Django stuff
+db.sqlite3
+/media/
+staticfiles/
+static/
+student_images/
+
+# Environment variables (if you use any)
+.env
+
+# VSCode settings (optional)
+.vscode/
+
+# Logs
+*.log
+
