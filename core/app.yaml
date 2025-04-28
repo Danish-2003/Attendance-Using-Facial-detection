@@ -1,0 +1,18 @@
+runtime: python39
+
+entrypoint: gunicorn core.wsgi --bind :$PORT
+
+env_variables:
+  DJANGO_SETTINGS_MODULE: "core.settings"
+
+automatic_scaling:
+  target_cpu_utilization: 0.65
+  min_instances: 1
+  max_instances: 2
+
+handlers:
+  - url: /static
+    static_dir: staticfiles/
+
+  - url: /.*
+    script: auto
