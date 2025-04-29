@@ -11,7 +11,6 @@ from scipy.spatial.distance import cosine
 from home.models import *
 
 detector = MTCNN()
-facenet_model = DeepFace.build_model("Facenet")
 
 # Create your views here.
 def home(request):  # sourcery skip: last-if-guard
@@ -34,16 +33,16 @@ def home(request):  # sourcery skip: last-if-guard
         face = detector.detect_faces(img)
 
         if not face:
-            return JsonResponse({"message" : "No Fac Found" },status=400)
+            return JsonResponse({"message" : "No Face Found" },status=400)
         
         x,y,w,h = face[0]["box"]
 
         stud_face = img[y:y+h, x:x+w]
 
-        embedding = DeepFace.represent(stud_face,model_name="Facenet",model=facenet_model,enforce_detection=False)
+        embedding = DeepFace.represent(stud_face,model_name="Facenet",enforce_detection=False)
 
         if not embedding:
-            return JsonResponse({"error": "Face Extraction Failed "},status=400)
+            return JsonResponse({"message": "Face Extraction Failed "},status=400)
 
         face_embedding = pkl.dumps(np.array(embedding[0]["embedding"]))
 
@@ -65,7 +64,7 @@ def home(request):  # sourcery skip: last-if-guard
 
 def attendance(request):
     # sourcery skip: extract-method, remove-redundant-fstring, remove-unnecessary-else, swap-if-else-branches
-    context = {'page': 'Attendance'}
+    context = {}
     if request.method == 'POST' and request.FILES.get("image"):
         uploaded_image = request.FILES.get("image")
 
@@ -85,7 +84,7 @@ def attendance(request):
 
         face = img[y:y+h,x:x+w]
 
-        test_embedding = DeepFace.represent(face,model_name="Facenet",model=facenet_model,enforce_detection=False)
+        test_embedding = DeepFace.represent(face,model_name="Facenet",enforce_detection=False)
 
         if not test_embedding:
             return JsonResponse({"message": "Face Extraction Failed "},status=400)
@@ -106,16 +105,19 @@ def attendance(request):
                 min_distance = distance
                 recognized_stud = student
 
-        if recognized_stud:
-            context = {"name": recognized_stud.name,"image" :recognized_stud.image,"page":"attendance"}
+            if recognized_stud:
+                context = {"name": recognized_stud.name,"image" :recognized_stud.image,"page":"attendance"}
 
-            today = timezone.now().date()
-            attendance,created = Attendance.objects.get_or_create(student = recognized_stud,date = today)
+                today = timezone.now().date()
+                attendance,created = Attendance.objects.get_or_create(student = recognized_stud,date = today)
 
-            if created :
-                return JsonResponse({"Message": f"Attendance marked for {recognized_stud.name}"})
-            else:
-                return JsonResponse({"Message":f"Attendance is already marked "})
+                if created :
+                    return JsonResponse({"Message": f"Attendance marked for {recognized_stud.name}"})
+                else:
+                    return JsonResponse({"Message":f"Attendance is already marked "})
+
+
+            
 
 
     return render(request,"attendance.html",context)
