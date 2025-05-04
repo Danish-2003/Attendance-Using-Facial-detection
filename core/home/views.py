@@ -9,8 +9,14 @@ from deepface import DeepFace
 from datetime import datetime
 from scipy.spatial.distance import cosine
 from home.models import *
+import base64
+from io import BytesIO
+from PIL import Image
 
-detector = MTCNN()
+def get_detector():
+    return MTCNN()
+
+detector = get_detector()
 
 # Create your views here.
 def home(request):  # sourcery skip: last-if-guard
@@ -65,10 +71,15 @@ def home(request):  # sourcery skip: last-if-guard
 def attendance(request):
     # sourcery skip: extract-method, remove-redundant-fstring, remove-unnecessary-else, swap-if-else-branches
     context = {}
-    if request.method == 'POST' and request.FILES.get("image"):
-        uploaded_image = request.FILES.get("image")
+    if request.method == 'POST':
+        base64_img = request.POST.get("webcam_image")
+        if not base64_img:
+            return JsonResponse({"message": "No image data received"}, status=400)
+        
+        _, imgstr = base64_img.split(';base64,')
+        image_data = base64.b64decode(imgstr)
 
-        image_array = np.frombuffer(uploaded_image.read(),np.uint8)
+        image_array = np.frombuffer(image_data, np.uint8)
 
         img = cv2.imdecode(image_array,cv2.IMREAD_COLOR)
 
@@ -115,9 +126,5 @@ def attendance(request):
                     return JsonResponse({"Message": f"Attendance marked for {recognized_stud.name}"})
                 else:
                     return JsonResponse({"Message":f"Attendance is already marked "})
-
-
-            
-
 
     return render(request,"attendance.html",context)

@@ -7,15 +7,52 @@
 
    <div class="container mt-4 mb-3">
 
-    <label for="image" class="form-label">Upload Image</label>
-    <input type="file" class="form-control" name="image" required>
-   </div>
-   <button type="submit" class="btn btn-primary mb-2">Attendance</button>
+    <label for="image" class="form-label">Capture Image</label>
 
+    <video id="image"  width="100%" autoplay class="mb-3" style="transform: scaleX(-1);"></video>
+    <br>
+
+    <canvas id="canvas" class="d-none"></canvas>
+    <input type="hidden" name="webcam_image" id="webcam_image">
+
+    <button type="button" id="captureBtn" class="btn btn-outline-success mt-2 mb-2">Capture</button>
+   </div>
+
+
+   <button type="submit" class="btn btn-primary mb-2">Attendance</button>
     
 </form>
 
 
+
+<script>
+    const video = document.getElementById('image');
+    const canvas = document.getElementById('canvas');
+    const captureButton = document.getElementById('captureBtn');
+    const webCamImage = document.getElementById('webcam_image');
+    const context = canvas.getContext('2d');
+
+    navigator.mediaDevices.getUserMedia({video:true}).then(stream =>{
+        video.srcObject = stream;
+    })
+    .catch(err=>{
+        console.log("Webcam access Denied ", err);
+    });
+
+    captureButton.addEventListener('click',()=>{
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight
+        context.drawImage(video,0,0, canvas.width,canvas.height);
+        canvas.classList.remove('d-none');
+
+        const dataUrl = canvas.toDataURL('image/jpeg');
+        webCamImage.value = dataUrl;
+
+       
+    });
+
+
+</script>
 
 
 {% endblock %}

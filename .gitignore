@@ -3,6 +3,7 @@ venv/
 .venv/
 env/
 .env/
+*.env
 
 # Python bytecode
 __pycache__/
@@ -23,4 +24,6 @@ student_images/
 
 # Logs
 *.log
-
+/public/media/
+secrets/
+*.json

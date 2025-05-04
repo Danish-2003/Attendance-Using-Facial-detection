@@ -5,7 +5,7 @@ import datetime
 class Students(models.Model):
     name = models.CharField(max_length=100)
 
-    roll_no = models.IntegerField(unique=True)
+    roll_no = models.BigIntegerField(unique=True)
 
     face_embeddings = models.BinaryField()
 
